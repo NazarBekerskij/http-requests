@@ -1,39 +1,76 @@
 import './App.css'
-import { Component } from 'react'
-
 import Searchbar from './components/Searchbar/Searchbar'
 import ImageGallery from './components/ImageGallery/ImageGallery'
+import { Component } from 'react'
+import { fetchImages } from './services/api'
+import Loader from './components/Loader/Loader'
+import Button from './components/Button/Button'
+import Modal from './components/Modal/Modal'
 
-class App extends Component {
+class App extends Component{
   state = {
-    isModal: false,
-    images: [{
-      id: 1,
-      webformatURL: "https://i.pinimg.com/474x/18/60/67/186067c3c81040a68a049b9344b9f995.jpg",
-      tags: "picture"
-    }, {
-      id: 2,
-      webformatURL: "https://media.gettyimages.com/id/963682418/photo/kiev-ukraine-cristiano-ronaldo-of-real-madrid-celebrates-with-the-uefa-champions-league-trophy.jpg?s=612x612&w=gi&k=20&c=AhRjslBcalAy91TxbNQoIO8H_anJnRH5GfbYjEhzstM="
-    }]
+    images: [],
+    loading: false,
+    page: 1,
+    searchValue: "",
+    largImage: "",
   }
 
+
+  handleBigImage = (img) => {
+    console.log(img);
+    
+    this.setState({
+      largImage: img,      
+    })
+  } 
 
 
   handleSearchSubmit = (searchValue) => {
-    console.log("отримали в app", searchValue);
-    
+    this.setState({
+      loading: true,
+      page: 1,
+      searchValue: searchValue,
+      images: [],
+    })
+      fetchImages(searchValue, 1).then((images) => {
+        this.setState({
+          images: images,
+          loading: false,
+        })
+      })
   }
+
+  handleLoadMore = () => {
+  this.setState(
+    (prev) => ({
+      page: prev.page + 1,
+      loading: true,
+    }),
+    () => {
+      fetchImages(this.state.searchValue, this.state.page)
+        .then((images) => {
+          this.setState((prev) => ({
+            images: [...prev.images, ...images],
+            loading: false,
+          }));
+        });
+    }
+  );
+};
 
 
   render(){
     return(
-      <div>
-        <Searchbar onSubmit={this.handleSearchSubmit}/>
-        <ImageGallery  images={this.state.images}/>
-      </div>
+      <>
+      <Searchbar onSubmit={this.handleSearchSubmit}/>
+     { this.state.loading && <Loader/> }
+      <ImageGallery images={this.state.images}/>
+      {this.state.images.length > 0 && <Button onClick={this.handleLoadMore}/>}
+     {this.state.largImage && <Modal onClick={this.handleBigImage} largImage={this.state.largImage}/>}
+      </>
     )
   }
 }
-
 
 export default App

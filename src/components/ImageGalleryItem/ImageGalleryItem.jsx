@@ -1,15 +1,21 @@
 import { Component } from "react";
-
+// import style from "./ImageGallery.module.css"
 class ImageGalleryItem extends Component {
-  render() {
-    const { img } = this.props;
 
+  handleImageClick = (img) => {
+    // console.log(img);
+    this.props.onClick(img)
+  }
+
+  render() {
+    const {image} = this.props
     return (
-      <li>
-        <img src={img.webformatURL} alt={img.tags || "Image"} />
-      </li>
+      <>
+        <li>
+          <img onClick={() => this.handleImageClick(image.largeImageURL)} src={image.webformatURL} alt={image.tags} />
+        </li>
+      </>
     );
   }
 }
-
 export default ImageGalleryItem;
