@@ -3,7 +3,7 @@ import style from "./ImageGallery.module.css"
 import ImageGalleryItem from "../ImageGalleryItem/ImageGalleryItem";
 class ImageGallery extends Component {
   render() {
-    const { images, onClick } = this.props;
+    const { images, onClick} = this.props;
     return (
       <>
         <ul className={style.list}>

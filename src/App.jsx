@@ -16,10 +16,13 @@ class App extends Component{
     largImage: "",
   }
 
+  handleCloseModal = () => {
+    this.setState({
+      largImage: "",
+    })
+  }
 
-  handleBigImage = (img) => {
-    console.log(img);
-    
+  handleBigImage = (img) => {    
     this.setState({
       largImage: img,      
     })
@@ -65,9 +68,9 @@ class App extends Component{
       <>
       <Searchbar onSubmit={this.handleSearchSubmit}/>
      { this.state.loading && <Loader/> }
-      <ImageGallery images={this.state.images}/>
+      <ImageGallery images={this.state.images} onClick={this.handleBigImage}/>
       {this.state.images.length > 0 && <Button onClick={this.handleLoadMore}/>}
-     {this.state.largImage && <Modal onClick={this.handleBigImage} largImage={this.state.largImage}/>}
+     {this.state.largImage && <Modal onClick={this.handleBigImage} onClose={this.handleCloseModal} largImage={this.state.largImage}/>}
       </>
     )
   }
